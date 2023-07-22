@@ -13,11 +13,11 @@ sidebar:
 
 
 
-##문제 정의:
+## 문제 정의:
 
 ![image-20230718232337079](D:\edjjincode-github-blog\edjjincode.github.io\images\2023-07-18-third\image-20230718232337079.png)
 
-##문제 제한 사항:
+## 문제 제한 사항:
 
 ![image-20230718232451688](D:\edjjincode-github-blog\edjjincode.github.io\images\2023-07-18-third\image-20230718232451688.png) 
 
@@ -27,7 +27,7 @@ sidebar:
 
 
 
-##First Thought:
+## First Thought:
 
 
 
@@ -37,9 +37,22 @@ sidebar:
 
 
 
-##Code for execution of First Thought:
+## Code for execution of First Thought:
 
-![image-20230718232822730](D:\edjjincode-github-blog\edjjincode.github.io\images\2023-07-18-third\image-20230718232822730.png) 
+```python
+from itertools import permutations
+
+def solution(numbers):
+    result_list = []
+    combi = list(permutations(numbers, len(numbers)))
+    for comb in combi:
+        A = "".join(map(str, comb))
+        result_list.append(int(A))
+    return str(max(result_list))
+      
+```
+
+ 
 
 * itertools 라이브러리에서 permutations 함수를 불러왔다.
 * permutations(리스트, 조합의 길이)
@@ -48,7 +61,7 @@ sidebar:
 
 
 
-##코드 실행 결과:
+## 코드 실행 결과:
 
 
 
@@ -60,7 +73,7 @@ sidebar:
 
 
 
-##올바른 풀이:
+## 올바른 풀이:
 
 
 
@@ -68,9 +81,16 @@ sidebar:
 
 
 
-##다른 사람의 풀이:
+## 다른 사람의 풀이:
 
-![image-20230719000809672](D:\edjjincode-github-blog\edjjincode.github.io\images\2023-07-18-third\image-20230719000809672.png)
+
+
+```python
+def solution(numbers):
+    numbers = list(map(str, numbers))
+    numbers.sort(key=lambda x:x*3, reverse=True)
+    return str(int("".join(numbers)))
+```
 
 
 
@@ -84,9 +104,42 @@ sidebar:
 
 
 
-##배운점:
+## 배운점:
 
 
+
+1. 제약 조건은 그냥 있는 것이 아니다
+
+2. python 라이브러리에서 제공하는 permutation의 시간복잡도는 O(n!)으로 시간 복잡도가 굉장히 크다. 따라서 시간 복잡도 제한에 걸릴 가능성이 높다.
+
+3. python 라이브러리를 활용하지 않은 상태에서 순열을 구현하고 싶을 때 사용하는 코딩을 짜보았다.
+
+   ```py
+   #재귀함수를 이용한 풀이
+   
+   def perm(arr, n):
+       result = []
+       if n > len(arr):
+           return result
+       if n == 1:
+           for i in arr:
+               result.append([i])
+       elif n > 1:
+           for i in range(len(arr)):
+               ans = [i for i in arr]
+               ans.remove(arr[i])
+               for p in perm(ans, n-1):
+                   result.append([arr[i]]+p)
+      return result
+   
+   arr = [1, 2, 3]
+   print(perm(arr, 3))
+               
+   ```
+
+   
+
+   
 
 
 
