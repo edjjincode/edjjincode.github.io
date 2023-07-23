@@ -33,7 +33,7 @@ sidebar:
 
 연속적인 신호를 이산적으로 바꾸는 과정에서 특정 sampling rate에서 sampling을 하는 과정을 거치게 된다.
 
-<img src="../images/2023-07-19-BearingProject/sampling_사진.png" alt="sampling_사진" style="zoom:67%;" />
+![sampling_사진.png]({{site.url}}/images/2023-07-19-BearingProject/sampling_사진.png)
 
 그림에서 보다시피, sample rate을 10Hz로 했을 때 더 많은 데이터를 뽑게 되고 더 정교하게 복원할 수 있다. 반면 sample rate을 5Hz로 했을 때 데이터를 적게 뽑게 되고 덜 정교한 그래프를 복원하게 된다. Sample rate을 나이퀴스트 rate보다 적게 뽑았을 시, 원본(자연 데이터)를 복원할 수 없게 된다. 따라서 샘플링을 할 때는 나이퀘스트 rate보다 크게 뽑아야 한다.
 
@@ -143,7 +143,7 @@ plt.show()
 
 앞서 푸리에 변환에 대해서 배운 바 있다. 푸리에 변환은 신호를 시간 차원에서 주파수 차원으로 변환하는 데 획기적인 기법이지만 시간을 반영하지 못한다는 치명적인 단점이 존재한다.
 
-```Python
+```python
 t_n = 1
 N = 100000
 T = t_n / N
@@ -188,7 +188,7 @@ plt.show()
 
 Wavelet은 싸인형태의 신호가 아닌 다양한 형태의 신호를 사용한다.
 
-![image-20230720154304351](../images/2023-07-19-BearingProject/image-20230720154304351.png)
+![image-20230720154304351]({{site.url}}/images/2023-07-19-BearingProject/image-20230720154304351.png)
 
 싸인 신호와 Wavelet의 가장 큰 차이는 싸인 신호는 그 영역이 무한한 반면, Wavelet 같은 경우 지역(특정 시간)에 대해서 파형을 갖는다. 이러한 특성 때문에 푸리에 변환과 달리 시간적인 특성을 반영할 수 있다.
 
@@ -196,7 +196,7 @@ Wavelet은 싸인형태의 신호가 아닌 다양한 형태의 신호를 사용
 
 푸리에 변환 같은 경우 싸인 형태의 파형을 활용하는 반면, Wavelet은 여러 형태의 Wavelet을 활용할 수 있다. 해당 Wavelet을 다 활용해 보고 그 중에서 가장 좋은 결과값을 구해내는 Wavelet을 선택하면 된다.
 
-![image-20230721181614073](../images/2023-07-19-BearingProject/image-20230721181614073.png)
+![image-20230721181614073]({{site.url}}/images/2023-07-19-BearingProject/image-20230721181614073.png)
 
 다음은 다양한 형태의 wavelet을 나타낸다. 각각의 형태의 wavelet은 다른 특징을 가지고 있어 적합한 환경에 활용될 수 있다.
 
@@ -263,7 +263,7 @@ plt.subplots_adjust(top=0.9)
 plt.show()
 ```
 
-![image-20230721184056349](../images/2023-07-19-BearingProject/image-20230721184056349.png)
+![image-20230721184056349]({{site.url}}/images/2023-07-19-BearingProject/image-20230721184056349.png)
 
 위 그림은 동일한 'Daubechies' 형태의 Wavelet을 나타낸다. 첫번째 열은 db1, 두번째 열은 db2, 세번째 열은 db3, 네번째 열은 db4이다. db n 형태에서 n은 사라지는 구간의 수를 의미한다.
 
@@ -313,7 +313,7 @@ plt.show()
 
 ```
 
-![image-20230721194641578](../images/2023-07-19-BearingProject/image-20230721194641578.png)
+![image-20230721194641578]({{site.url}}/images/2023-07-19-BearingProject/image-20230721194641578.png)
 
 위 코딩을 확인하면, DWT를 구하기 위해 pywt.dwt() 함수가 사용된다. DWT는 approximation coefficients, detail coefficient 두가지 종류의 계수를 반환한다. approximation coefficients는 low pass filter에 해당하고 detail coefficient는 high pass filter에 해당한다. 그전 단계의 DWT 값을 다시 적용하는 방식으로 진행된다.
 
@@ -349,7 +349,7 @@ ax.set_xlabel('Sample No', fontsize=16)
 plt.show()
 ```
 
-![image-20230721202757223](../images/2023-07-19-BearingProject/image-20230721202757223.png)
+![image-20230721202757223]({{site.url}}/images/2023-07-19-BearingProject/image-20230721202757223.png)
 
 ###### ❓많은 Wavelet 중 어떤 걸 활용해야 할까?
 
