@@ -43,7 +43,7 @@ sidebar:
 
 모든 신호는 더 간단한 형태의 신호 싸인 혹은 코싸인 형태의 신호의 합 형태로 분해가 가능하다. 시간 영역에서 주파수 영역으로 변환하는 것을 푸리에 변환이라고 부른다. 반대 과정(주파수 영역에서 시간 영역으로 변환)하는 것을 역푸리에 변환이라고 한다.
 
-```Py
+```python
 
 from scipy.fftpack import fft
 
@@ -67,7 +67,7 @@ plt.title("Frequency domain of the signal", fontsize=16)
 plt.show()
 ```
 
-![image-20230719215524620](../images/2023-07-19-BearingProject/image-20230719215524620.png)
+![image-20230719215524620]({{site.url}}/images/2023-07-19-BearingProject/image-20230719215524620.png)
 
 위 그림 같은 경우 fs가 100Hz이기 때문에 FFT 스펙트럼은 fs/2인 50Hz이다. fs 값이 클수록 FFT에서 더 큰 주파수를 계산할 수 있게 된다.
 
@@ -79,7 +79,7 @@ FFT는 N points의 신호 값을 return 할 것이고 이의 N/2 값이 의미 �
 
 PSD는 푸리에 변환과 메우 밀접한 연관이 있다. PSD 같은 경우, FFT값이 단순히 신호의 주파수 형태의 스펙트럼을 구한 것이라면, PSD는 그것에 파워 정도도 구한 것이라고 할 수 있다. 푸리에 변환과 거의 유사하나 각 신호의 peak 값의 높이 및 넓이가 다를 것이다.
 
-![image-20230719222021425](../images/2023-07-19-BearingProject/image-20230719222021425.png)
+![image-20230719222021425]({{site.url}}/images/2023-07-19-BearingProject/image-20230719222021425.png)
 
 위 그림은 PSD를 시각화한 것이다.
 
@@ -135,7 +135,7 @@ plt.ylabel('Autocorrelation amplitude')
 plt.show()
 ```
 
-![image-20230720145315485](../images/2023-07-19-BearingProject/image-20230720145315485.png)
+![image-20230720145315485]({{site.url}}/images/2023-07-19-BearingProject/image-20230720145315485.png)
 
 자기 상관함수를 통해 생성된 값의 Peak값의 시간 축을 주파수 축으로 변환하면 FFT와 같은 값과 같게 된다.
 
@@ -174,7 +174,7 @@ plt.tight_layout()
 plt.show()
 ```
 
-![image-20230720150430725](../images/2023-07-19-BearingProject/image-20230720150430725.png)
+![image-20230720150430725]({{site.url}}/images/2023-07-19-BearingProject/image-20230720150430725.png)
 
 위 그림에서도 볼 수 있듯이 Signal1과 Signal2는 다른 파형을 띄고 있다. 하지만 푸리에 변환 시 동일한 값을 구한다는 것을 알 수 있다. 이는 푸리에 변환을 할 시 시간 차원을 고려하지 못하기 때문이다.
 
