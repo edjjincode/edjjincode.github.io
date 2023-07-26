@@ -25,7 +25,7 @@ sidebar:
 
 ### 📈Filtering 방법:
 
-대부분의 경우 베어링 주파수를 구할 때 베어링 결함 고유 주파수가 측정되는 것이 아닌 다른 요소에 의한 측대파로 나타난다. 따라서 받은 측대파를 filtering 방법을 거쳐 고유 주파수를 구해주는 과정을 거쳐야 한다. 이때 사용되는 Filtering 방법으로는 FFT, PSD, Auto correlation, Spectral Kurtosis + Hilbert transform이 있다.
+대부분의 경우 베어링 주파수를 구할 때 베어링 결함 고유 주파수가 측정되는 것이 아닌 다른 요소에 의한 측대파로 나타난다. 따라서 받은 측대파를 filtering 방법을 거쳐 고유 주파수를 구해주는 과정을 거쳐야 한다. 이때 사용되는 Filtering 방법으로는 FFT, PSD, Auto correlation, Spectral Kurtosis + Hilbert transform이 있다. Spectral Kurtosis 및 Hilbert transform 관련 내용은 추후에 다루기로 하고 나머지 filtering 방법에 대해서 다루겠다.
 
 이러한 Filtering을 이해하기 앞서 기본적인 신호처리 방법에 대해 알 필요가 있다.
 
