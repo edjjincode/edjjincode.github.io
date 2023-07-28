@@ -35,7 +35,7 @@ sidebar:
         dx = [-1, 1, 0, 0]
         dy = [0, 0, -1, 1]
 
-        q.deque()
+        q = deque()
         q.append((0,0))
         visited[0][0] = True
 
