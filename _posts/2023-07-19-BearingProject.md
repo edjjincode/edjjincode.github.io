@@ -602,6 +602,8 @@ from pyod.models.deep_svdd import DeepSVDD
 
 VAE는 Variational Auto-Encoder의 약자로 이름만 봐서는 Auto-Encoder와 비슷한 개념이라 생각이 들지만 전혀 다른 개념이다.
 
+다음 링크를 참고하였다. [VAE\_블로그](https://chickencat-jjanga.tistory.com/3)
+
 AE:
 
 ![AE]({{site.url}}/images/2023-07-19-BearingProject/vae-autoencoder.png){: .align-center}
@@ -631,6 +633,33 @@ VAE는 Input image X를 잘 설명하는 feature를 추출하여 Latent vector z
 ✔ AE의 decoder처럼 latent vector로부터 이미지를 생성해낸다고 보면 된다. 하지만 AE와 다른 점은 latent vector에 있는 값이 값이 아니라 확률 값이라는 점이다.
 
 예를 들어, 시츄 얼굴을 그리고자 한다면, 시츄의 눈, 코, 입 등의 feature를 평균 및 분산 형태로 Latent vector z에 담고, 그 z를 이용해 시츄의 얼굴을 그리게 된다.
+
+VAE의 구조를 도식화 하면 다음과 같다.
+
+![VAE_3]({{site.url}}/images/2023-07-19-BearingProject/vae_구조.png){: .align-center}
+
+VAE는 Input Image가 들어오면, 그 이미지에서의 다양한 특징들이 각각의 확률 변수가 되는 어떤 확률 분포를 만들게 된다. 이런 확률 중에서 확률값이 높은 부분을 이용하면 실제에 있을법한 이미지를 새롭게 만들 수 있다.
+
+![VAE_4]({{site.url}}/images/2023-07-19-BearingProject/vae_확률도식.png){: .align-center}
+
+##### VAE를 이용한 이상감지:
+
+자, 이제 VAE의 개념을 알아봤으니, VAE가 이상감지에 어떻게 사용되는지 알아봐야 한다. VAE는 AE가 이상감지에 사용되는 방식과 동일한 원리로 사용된다.
+
+우선 AE를 활용한 이상감지에 원리를 살펴보자. Auto Encoder는 Encoder와 Decoder로 나눠져있다. Encoder 같은 경우, 입력 값의 특징을 값 형태로 변환한다. 변환된 값을 통해 Decoder로 복원을 한다. 정상치가 Encoder에 들어가 생기는 값과 이상치가 Encoder에 들어가 생기는 값이 다르기 때문에 복원시 정상치와 이상치가 다르게 나타나게 된다. AE를 이상감지에 활용할 때는 이러한 방법을 사용한다.
+
+VAE도 같은 원리로 이상감지에 활용된다. 정상치와 이상치가 Encoder에 들어가면 latent vector에 서로 다른 형태의 확률 분포를 갖게되고 이를 다시 Decoder를 통해 재생성하면 서로 다른 결과 값을 만들게 된다. 위와 같은 원리를 활용하여 VAE를 감지할 수 있다.
+
+##### VAE를 이용한 이상감지 python 코드:
+
+1. pyod에서 제공하는 모듈 활용:
+
+```python
+from pyod.models.thresholds import VAE
+
+```
+
+2.
 
 #### AnoGan을 활용한 이상감지
 
