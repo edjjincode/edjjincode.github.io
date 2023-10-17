@@ -65,7 +65,7 @@ Dwt가 베어링 filtering에 활용되는 방식은 딥러닝에서 Auto-Encode
 
 모델을 생성할 때 모델에 적합한 특성을 선택하여 분석을 하는 것이 중요하다. 유사성 모델을 사용할 때는 추세를 활용하여 특성을 추출하였다. 각 센서 값과 시계열과의 상관관계를 구한 후 상관관계가 적은 값들을 제거하는 과정을 거쳤다.
 
-```Python
+```python
 def trendability(col):
     trend_vals = []
     for i in df_train.UnitNumber.unique():
@@ -76,7 +76,7 @@ def trendability(col):
 
 시계열과의 상관성을 구할 수 있는 함수를 만들었다. trendability value 값이 클 수 록 시계열과 상관성이 높은 feature라고 할 수 있다.
 
-```Python
+```python
 trend_df_list = []
 for col in sensor_cols:
     trend_df_list.append({'feature': col, 'trendability_val': trendability(col)})
@@ -86,7 +86,7 @@ trend_df = pd.DataFrame(trend_df_list, columns = ['feature', 'trendability_val']
 
 각 센서별로 trenability value를 구한 후 barplot을 구하였다.
 
-```Python
+```python
 fig, ax = plt.subplots(figsize = (7,10))
 sns.barplot(y = trend_df.feature, x = trend_df.trendability_val)
 ```
@@ -101,13 +101,13 @@ sns.barplot(y = trend_df.feature, x = trend_df.trendability_val)
 
 앞서 언급했듯이, 각 센서 데이터는 서로 영향을 주기 때문에 센서에 노이즈가 껴져 있다. 따라서 이를 신호처리를 활용하여 노이즈를 제거하는 과정을 거쳐야 한다.
 
-```Python
+```python
 df = df_train[feats]
 ```
 
 Daubechies Wavelet을 사용하여 높은 주파수를 가진 파형을 처리하는 과정을 거쳤다.Threshold 값은 0.63으로 두었다.
 
-```Python
+```python
 def lowpassfilter(signal, thresh = 0.63, wavelet="db4"):
     thresh = thresh*np.nanmax(signal)
     coeff = pywt.wavedec(signal, wavelet, mode="per" )
@@ -118,7 +118,7 @@ def lowpassfilter(signal, thresh = 0.63, wavelet="db4"):
 
 만든 lowpassfilter의 출력 값을 dwt_list에 저장하는 과정을 거쳤다.
 
-```Python
+```python
 dwt_list = []
 for i in range(len(feats)):
     dwt = lowpassfilter(df.iloc[:, i], 0.4)
@@ -127,7 +127,7 @@ for i in range(len(feats)):
 
 dwt_list를 데이터 프레임화 시키는 과정을 거쳤다.
 
-```Python
+```python
 df_dwt = pd.DataFrame(dwt_list)
 df_dwt = df_dwt.T
 df_dwt.columns = df.columns
@@ -144,13 +144,13 @@ df_new = pd.concat([df, df_2], axis = 1)
 
 잔여 수명 값(RUL)을 Min Max Scaling을 통해 정규화를 해준 후 "HI"(Hazard Index) 칼럼을 생성한 후 값을 넣었다.
 
-```Python
+```python
 df_new['HI'] = df_new.groupby('UnitNumber').RUL.transform(lambda x: minmax_scale(x))
 ```
 
 ![HI]({{site.url}}/images/2023-10-15-NasaTurbofan/HI.png){: .align-center}
 
-```Python
+```python
 sns.lineplot(data= df_new[df_new.UnitNumber < 31], x = 'Cycle', y = 'HI', hue= 'UnitNumber')
 ```
 
@@ -162,28 +162,28 @@ sns.lineplot(data= df_new[df_new.UnitNumber < 31], x = 'Cycle', y = 'HI', hue= '
 
 ![HI_coefficient]({{site.url}}/images/2023-10-15-NasaTurbofan/HI_coefficient.png){: .align-center}
 
-```Python
+```python
 model = LinearRegression()
 ```
 
-```Python
+```python
 X = df_new[feats]
 y = df_new.HI
 X.shape, y.shape
 ```
 
-```Python
+```python
 model.fit(X, y)
 model.score(X,y)
 ```
 
-```Python
+```python
 model.coef_
 ```
 
 구한 선형 회귀 모델의 coefficient 값을 센서들의 데이터와 내적하여 모든 데이터를 대표할 수 있는 선형 열화 지수 “Hi_final”을 만든다.
 
-```Python
+```python
 df_new["HI_final"] = df_new[feats].dot(model.coef_)
 df_new.HI_final.head()
 ```
@@ -196,14 +196,14 @@ df_new.HI_final.head()
 
 [이동 평균을 활용한 그래프]
 
-```Python
+```python
 sns.lineplot(data= df_new[df_new.UnitNumber < 31], x = 'Cycle', y = 'HI_final', hue= 'UnitNumber')
 plt.ylabel('Health Indicator')
 ```
 
 ![이동평균_그래프]({{site.url}}/images/2023-10-15-NasaTurbofan/이동평균그래프.png){: .align-center}
 
-```Python
+```python
 for i in range(1,101):
     sns.lineplot(data= df_new[df_new.UnitNumber == i], x = 'Cycle', y = 'HI_final', color = 'green', lw = 0.2)
 sns.scatterplot(data = df_new[df_new.HI == 0], x = 'Cycle', y = 'HI_final', label = 'Failure',
@@ -226,7 +226,7 @@ plt.ylabel('Health Indicator')
 
 각 기계의 고유번호와 각 기계별 파라미터들을 하나의 데이터 프레임 params_df에 저장하였다. 해당 파라미터들은 주기에 따른 HI의 예측을 계산하는 데 사용된다.
 
-```Python
+```python
 params_list = []
 for i in range(1,101):
     y = df_new.HI_final[df_new.UnitNumber == i]
@@ -236,13 +236,13 @@ for i in range(1,101):
 params_df = pd.DataFrame(params_list, columns = ['UnitNumber', 'theta_2', 'theta_1', 'theta_0'])
 ```
 
-```Python
+```python
 params_df.head()
 ```
 
 [이동평균법-2차 곡선 파이썬 코드]
 
-```Python
+```python
 HI = df_new.HI_final[df_new.UnitNumber == 1]
 cycle = df_new.Cycle[df_new.UnitNumber == 1]
 theta_0 = params_df.theta_0[params_df.UnitNumber == 1].values
@@ -251,7 +251,7 @@ theta_2 = params_df.theta_2[params_df.UnitNumber == 1].values
 HI_fit = theta_0 + theta_1*cycle + theta_2*cycle*cycle
 ```
 
-```Python
+```python
 plt.plot(cycle,HI, label = 'True')
 plt.plot(cycle,HI_fit, label = 'Fitted')
 plt.ylabel('Health Indicator')
@@ -276,7 +276,7 @@ plt.title('Health Indicator of Unit 1');
 
 테스트 데이터 셋에 대해서도 훈련 데이터 셋과 동일하게 dwt를 통해 신호처리를 하였다.
 
-```Python
+```python
 dwt_test_list = []
 for i in range(len(feats)):
     dwt = lowpassfilter(df_test[feats].iloc[:, i], 0.4)
@@ -285,21 +285,21 @@ for i in range(len(feats)):
 
 테스트 데이터 셋에 대해서도 dwt를 활용하여 신호처리를 해 데이터를 전처리한다.
 
-```Python
+```python
 df_test_dwt = pd.DataFrame(dwt_test_list)
 ```
 
-```Python
+```python
 df_test_dwt  = df_test_dwt.T
 ```
 
-```Python
+```python
 df_test_dwt.columns = feats
 ```
 
 훈련 데이터 셋에서 생성한 계수를 그대로 테스트 데이터 셋에 사용해 “HI”(Hazard Index) 변수를 생성하였다.
 
-```Python
+```python
 df_test['HI'] = df_test_dwt.dot(model.coef_)
 df_test.HI.head()
 ```
@@ -315,7 +315,7 @@ HI의 예측 값을 구하기 위해선 다음과 같은 과정을 거쳐야 한
 3. 생성한 다차방정식의 값이 바로 HI의 예측 값, Pred_HI이다.
    Pred_HI 값을 구했으면 이를 실제 HI 값과 비교하여 잔차를 구할 수 있다. 잔차는 예측과 관측 값 간의 차이를 의미한다. 구한 잔차를 통해 유사성 점수를 구하는 것은 쉽다. 잔차의 제곱을 exponential 시키면 된다. 잔차가 작을수록 유사성 점수가 높아지게 된다. 즉 모델의 예측이 관측값과 더 가까울수록 유사성 점수가 높다고 할 수 있다.
 
-```Python
+```python
 list_test_fit = []
 for i in df_test.UnitNumber.unique():
     HI = df_test.HI[df_test.UnitNumber == i]
@@ -333,7 +333,7 @@ for i in df_test.UnitNumber.unique():
 df_test_fit = pd.DataFrame(list_test_fit, columns=['UnitNumber', 'Model', 'Residual', 'similarity', 'total_life'])
 ```
 
-```Python
+```python
 df_test_fit.head()
 ```
 
@@ -341,7 +341,7 @@ df_test_fit.head()
 
 df_test_fit 데이터 프레임에서 각 기계(UnitNumber) 마다 유사성 점수가 5번째로 높은 것까지 추출하여 result_df_5라는 새로운 데이터 프레임을 만들었다.
 
-```Python
+```python
 ind_5 = df_test_fit.groupby('UnitNumber')['similarity'].nlargest(5).reset_index()['level_1']
 result_df_5 = df_test_fit.iloc[ind_5]
 result_df_5.head()
@@ -351,7 +351,7 @@ result_df_5.head()
 
 이후 result_df_5에서 구한 각 기계 별 total_life의 평균과 테스트 데이터의 기계 별 사이클의 평균의 차이를 통해 잔여 수명 예측 값을 구한다.
 
-```Python
+```python
 y_true_5 = y_true.copy()
 
 y_true_5['Pred_RUL'] = (result_df_5.groupby('UnitNumber')['total_life'].mean() - df_test.groupby('UnitNumber')['Cycle'].max()).values
@@ -360,13 +360,13 @@ y_true_5.head()
 
 ![pred_rul]({{site.url}}/images/2023-10-15-NasaTurbofan/pred_rul.png){: .align-center}
 
-```Python
+```python
 sns.regplot(x = y_true_5.Pred_RUL, y = y_true_5.RUL)
 plt.xlabel('Predicted RUL')
 plt.ylabel('True RUL')
 ```
 
-```Python
+```python
 fig, ax = plt.subplots(figsize = (15, 7))
 sns.lineplot(x = y_true_5.UnitNumber, y = y_true_5.Pred_RUL, label = "Predicted RUL")
 sns.lineplot(x = y_true_5.UnitNumber, y = y_true_5.RUL, label = "True RUL")
@@ -375,15 +375,15 @@ plt.ylabel("Remaining Useful Life")
 plt.legend(loc = 1)
 ```
 
-```Python
+```python
 mean_squared_error(y_true_5.RUL, y_true_5.Pred_RUL)
 ```
 
-```Python
+```python
 from sklearn.metrics import mean_squared_error, r2_score
 ```
 
-```Python
+```python
 def evaluate(y_true, y_hat, label='test'):
     mse = mean_squared_error(y_true, y_hat)
     rmse = np.sqrt(mse)
@@ -391,10 +391,10 @@ def evaluate(y_true, y_hat, label='test'):
     print('{} set RMSE:{}, R2:{}'.format(label, rmse, variance))
 ```
 
-```Python
+```python
 evaluate(y_true_5.RUL, y_true_5.Pred_RUL)
 ```
 
-```Python
+```python
 mean_absolute_error(y_true_5.RUL, y_true_5.Pred_RUL)
 ```

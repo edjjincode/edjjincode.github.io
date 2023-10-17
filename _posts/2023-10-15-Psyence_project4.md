@@ -17,7 +17,7 @@ nav: "docs"
 
 각 센서들의 단조 특성 값을 구할 수 있는 함수를 설정한 뒤 각 센서들의 단조 특성 값을 구하였다.
 
-```Python
+```python
 def monotonicity(data):
 
     num_pos = data[data > 0].shape[0]
@@ -28,7 +28,7 @@ def monotonicity(data):
     return mon_val
 ```
 
-```Python
+```python
 mon_df = pd.DataFrame(columns = ['feature', 'monotonicity_val'])
 
 for col in sensor_cols:
@@ -38,18 +38,18 @@ for col in sensor_cols:
     mon_df = mon_df.append({'feature': col, 'monotonicity_val': np.mean(mon_val)}, ignore_index = True)
 ```
 
-```Python
+```python
 mon_df = mon_df.sort_values(by = 'monotonicity_val', ascending = False)
 mon_df.head()
 ```
 
-```Python
+```python
 fig, ax = plt.subplots(figsize = (7,10))
 
 sns.barplot(y = mon_df.feature, x = mon_df.monotonicity_val)
 ```
 
-```Python
+```python
 feats = mon_df.feature[mon_df.monotonicity_val > 0.08]
 feats
 ```
@@ -68,11 +68,11 @@ Threshold를 0.63으로 두고 wavelet 종류를 db4로 설정한 후 DWT 신호
 
 주성분 분석을 통해 21개의 센서 값을 대표할 수 있는 주성분을 뽑아낸다. 주성분 분석 결과 pc1이 pc2, pc3에 비해 설명력이 더 높은 것을 확인할 수 있다.
 
-```Python
+```python
 from sklearn.decomposition import PCA
 ```
 
-```Python
+```python
 pca = PCA(n_components=3)
 
 pca_data = pca.fit_transform(df_train_mean[feats])
@@ -86,23 +86,23 @@ pca_df.head()
 
 ![pc_graph]({{site.url}}/images/2023-10-15-NasaTurbofan/pc_graph.png){: .align-center}
 
-```Python
+```python
 pcs = ['pc1', 'pc2', 'pc3']
 ```
 
 처음 두 개의 주성분으로 구성된 공간에서 데이터를 시각화 하였다.
 
-```Python
+```python
 sns.pairplot(data = pca_df[pca_df.UnitNumber == 1], x_vars= pcs, y_vars = pcs)
 ```
 
-```Python
+```python
 sns.scatterplot(data = pca_df[pca_df.UnitNumber == 1], x = "pc1", y = "pc2", hue = "RUL")
 ```
 
 ![pc_scatterplot]({{site.url}}/images/2023-10-15-NasaTurbofan/pc_scatterplot.png){: .align-center}
 
-```Python
+```python
 fig, ax = plt.subplots()
 sns.lineplot(data = pca_df[pca_df.UnitNumber == 1], x = "cycle", y = "pc1", ax = ax)
 plt.axhline(pca_df[pca_df.UnitNumber == 1].pc1.max(), color = 'r')
@@ -115,7 +115,7 @@ ax.set_ylabel("Health Indicator")
 
 다음은 pc1 값을 주성분으로 했을 때 RUL(잔여 수명) 값을 도식화 한 것이다. RUL 값이 0일 때 확실하게 분류가 되는 것을 확인할 수 있다.
 
-```Python
+```python
 fig, ax = plt.subplots(figsize = (8,6))
 sns.distplot(pca_df.pc1[pca_df.RUL == 0], label= "RUL: 0")
 sns.distplot(pca_df.pc1[pca_df.RUL == 30], label= "RUL: 30")
@@ -128,12 +128,12 @@ plt.show()
 
 ![health_indicator_graph]({{site.url}}/images/2023-10-15-NasaTurbofan/health_indicator_graph.png){: .align-center}
 
-```Python
+```python
 threshold = pca_df.pc1[pca_df.RUL == 0].mean()
 threshold
 ```
 
-```Python
+```python
 threshold_std = pca_df.pc1[pca_df.RUL == 0].std()
 threshold_std
 ```
@@ -153,7 +153,7 @@ h(t) = Φ + θ*exp(β*cycle)
 
 각 기계 별로 주성분을 바탕으로 지수 성능 저하 모델을 돌린 후 나온 파라미터 값을 exp_params_df 데이터 프레임에 저장하였다.
 
-```Python
+```python
 def exp_degradation(parameters, cycle):
     '''
     Calculate an exponetial degradation of the form:
@@ -167,7 +167,7 @@ def exp_degradation(parameters, cycle):
     return ht
 ```
 
-```Python
+```python
 def residuals(parameters, data, y_observed, func):
     '''
     Compute residuals of y_predicted - y_observed
@@ -177,11 +177,11 @@ def residuals(parameters, data, y_observed, func):
     return func(parameters, data) - y_observed
 ```
 
-```Python
+```python
 param_0 = [-1, 0.01, 0.01]
 ```
 
-```Python
+```python
 exp_params_df = pd.DataFrame(columns = ['UnitNumber', 'phi', 'theta', 'beta'])
 
 for i in range(1,101):
@@ -195,7 +195,7 @@ for i in range(1,101):
     exp_params_df = exp_params_df.append({'UnitNumber':i, 'phi': phi, 'theta': theta, 'beta': beta}, ignore_index = True)
 ```
 
-```Python
+```python
 exp_params_df.head()
 ```
 
@@ -203,7 +203,7 @@ exp_params_df.head()
 
 생성한 지수 성능 저하 모델이 잘나오는 지 확인하기 위해 1번 기계의 주성분 값과 지수 성능 저하 모델을 시각화하였다. 시각화 결과, 지수 성능 저하 모델이 잘 피팅이 되는 것을 알 수 있다.
 
-```Python
+```python
 phi = exp_params_df.phi[exp_params_df.UnitNumber == 1].values
 theta = exp_params_df.theta[exp_params_df.UnitNumber == 1].values
 beta = exp_params_df.beta[exp_params_df.UnitNumber == 1].values
@@ -221,7 +221,7 @@ ax.set_xlabel("Cycles")
 ax.set_ylabel("Health Indicator")
 ```
 
-```Python
+```python
 fig, ax = plt.subplots(nrows = 20, ncols = 5, figsize = (30,50))
 
 ax = ax.ravel()
@@ -245,7 +245,7 @@ for i in range(0,100):
 plt.tight_layout()
 ```
 
-```Python
+```python
 fig, ax = plt.subplots(figsize = (10,3), nrows = 1, ncols = 3)
 sns.distplot(exp_params_df.phi, ax = ax[0])
 sns.distplot(exp_params_df.theta, ax = ax[1], color = "red")
@@ -258,7 +258,7 @@ sns.distplot(exp_params_df.beta, ax = ax[2], color = "green")
 
 테스트 데이터 셋에 대해서도 PCA를 진행하고 PC1을 건전 지표로 설정하였다.
 
-```Python
+```python
 window = 5
 
 df_test_mean = df_test.groupby('UnitNumber')[feats].rolling(window = window).mean()
@@ -270,7 +270,7 @@ df_test_mean.head()
 
 테스트 데이터 셋에 대해서도 PCA를 진행하고 PC1을 건전 지표로 설정하였다.
 
-```Python
+```python
 pca_test_data = pca.transform(df_test_mean[feats])
 
 pca_test_df = pd.DataFrame(pca_test_data, columns = ['pc1', 'pc2', 'pc3'])
@@ -283,22 +283,22 @@ pca_test_df.head()
 
 앞서 지수 성능모델을 만드는 과정을 통해 생성한 파라미터들에 대해 백분위수를 활용하여 경계(bound)를 정의하였다. 하한선을 25%, 상한선을 75%로 설정하여 백분위수 범위를 설정하였다.
 
-```Python
+```python
 phi_vals = exp_params_df.phi
 theta_vals = exp_params_df.theta
 beta_vals = exp_params_df.beta
 ```
 
-```Python
+```python
 phi_vals.mean()
 ```
 
-```Python
+```python
 param_1 = [phi_vals.mean(), theta_vals.mean(), beta_vals.mean()]
 param_1
 ```
 
-```Python
+```python
 lb = 25
 ub = 75
 phi_bounds = [np.percentile(phi_vals, lb), np.percentile(phi_vals, ub)]
@@ -306,7 +306,7 @@ theta_bounds = [np.percentile(theta_vals, lb), np.percentile(theta_vals, ub)]
 beta_bounds = [np.percentile(beta_vals, lb), np.percentile(beta_vals, ub)]
 ```
 
-```Python
+```python
 bounds = ([phi_bounds[0], theta_bounds[0], beta_bounds[0]],
           [phi_bounds[1], theta_bounds[1], beta_bounds[1]])
 bounds
@@ -325,7 +325,7 @@ bounds
 6. 구한 최적의 파라미터를 통해 전체 사이클을 구한다. Total_cycles = log(threshold-phi)/theta)/beta
 7. 전체 사이클과 테스트 데이터 셋의 사이클의 최대 값의 차이가 잔여 수명 예측 값이 된다.
 
-```Python
+```python
 result_test_df = pd.DataFrame(columns = ['UnitNumber', 'phi', 'theta', 'beta', 'Pred_RUL', 'True_RUL'])
 
 for i in pca_test_df.UnitNumber.unique():
@@ -344,7 +344,7 @@ for i in pca_test_df.UnitNumber.unique():
                                          ignore_index = True)
 ```
 
-```Python
+```python
 result_test_df.head()
 ```
 
@@ -376,20 +376,20 @@ for i in range(0,100):
 plt.tight_layout()
 ```
 
-```Python
+```python
 mean_squared_error(result_test_df.True_RUL, result_test_df.Pred_RUL)
 ```
 
-```Python
+```python
 mean_absolute_error(result_test_df.True_RUL, result_test_df.Pred_RUL)
 ```
 
-```Python
+```python
 def mean_absolute_percentage_error(y_true, y_pred):
     y_true, y_pred = np.array(y_true), np.array(y_pred)
     return np.mean(np.abs((y_true - y_pred) / y_true)) * 100
 ```
 
-```Python
+```python
 mean_absolute_percentage_error(result_test_df.True_RUL, result_test_df.Pred_RUL)
 ```

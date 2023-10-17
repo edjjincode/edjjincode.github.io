@@ -17,7 +17,7 @@ nav: "docs"
 
 [사용한 라이브러리]
 
-```Python
+```python
 import pandas as pd
 import numpy as np
 
@@ -53,7 +53,7 @@ import itertools
 !pip install lifelines
 ```
 
-```Python
+```python
 %matplotlib inline
 import pandas as pd
 import numpy as np
@@ -71,7 +71,7 @@ from lifelines.plotting import plot_lifetimes
 
 데이터 불러오기
 
-```Python
+```python
 dir_path = '/content/drive/MyDrive/CMAPSS/'
 # define column names for easy indexing
 index_names = ['unit_nr', 'time_cycles']
@@ -88,7 +88,7 @@ train.head()
 
 RUL 값을 추가하였다.
 
-```Python
+```python
 def add_remaining_useful_life(df):
     # Get the total number of cycles for each unit
     grouped_by_unit = df.groupby(by="unit_nr")
@@ -109,7 +109,7 @@ train[index_names+['RUL']].head()
 
 유의미하지 않은 데이터를 제거하여 feature selection 하는 단계를 거쳤다.
 
-```Python
+```python
 # clip RUL max as 125 means values in column greater than 125 becomes 125
 train['RUL'].clip(upper=125, inplace=True)
 
@@ -125,7 +125,7 @@ train.shape
 
 cycle 수가 200 아래 있는 것은 제거하는 과정을 거쳤다.
 
-```Python
+```python
 # cut off is the censoring cycle time line
 cut_off = 200
 train_censored = train[train['time_cycles'] <= cut_off].copy()
@@ -135,7 +135,7 @@ train_censored[train_censored["unit_nr"] == 50].tail()
 
 daubechies wavelet 형태의 이산 웨이블릿 변환을 활용하여 높은 주파수를 가지고 있는 신호를 제거하는 과정을 거쳤다.
 
-```Python
+```python
 def lowpassfilter(signal, thresh = 0.63, wavelet="db4"):
     thresh = thresh*np.nanmax(signal)
     coeff = pywt.wavedec(signal, wavelet, mode="per" )
@@ -144,42 +144,42 @@ def lowpassfilter(signal, thresh = 0.63, wavelet="db4"):
     return reconstructed_signal
 ```
 
-```Python
+```python
 dwt_list = []
 for i in range(len(remaining_sensors)):
     dwt = lowpassfilter(df.iloc[:, i], 0.4)
     dwt_list.append(dwt)
 ```
 
-```Python
+```python
 df_dwt = pd.DataFrame(dwt_list)
 ```
 
-```Python
+```python
 df_dwt = df_dwt.T
 ```
 
-```Python
+```python
 df_dwt.columns = remaining_sensors
 ```
 
-```Python
+```python
 df_1 = train_censored["unit_nr"]
 ```
 
-```Python
+```python
 df = pd.concat([df_1, df_dwt], axis = 1)
 ```
 
-```Python
+```python
 df_2 = train_censored[["time_cycles", "RUL"]]
 ```
 
-```Python
+```python
 df_new = pd.concat([df, df_2], axis = 1)
 ```
 
-```Python
+```python
 df_new.dropna(inplace = True)
 ```
 
@@ -189,7 +189,7 @@ df_new.dropna(inplace = True)
 
 이후 타임사이클이 200개 이하인 데이터만을 추출하였다.
 
-```Python
+```python
 train_cols = index_names + remaining_sensors + ['start', 'breakdown']
 predict_cols = ['time_cycles'] + remaining_sensors + ['start', 'breakdown']
 ```
@@ -198,7 +198,7 @@ predict_cols = ['time_cycles'] + remaining_sensors + ['start', 'breakdown']
 
 Cox 시간 변화 모델을 사용하여 데이터 셋의 생존 예측 모델을 구축하였다. Cox 시간 변화 모델은 시간에 따른 위험과 개별적인 요소들 간의 관계를 모델링한다.
 
-```Python
+```python
 ctv = CoxTimeVaryingFitter(penalizer=0.1)
 ctv.fit(df_new[train_cols], id_col="unit_nr", event_col='breakdown',
         start_col='start', stop_col='time_cycles', show_progress=True)
@@ -208,7 +208,7 @@ ctv.fit(df_new[train_cols], id_col="unit_nr", event_col='breakdown',
 
 Cox 시간 변화 모델의 요약 정보를 출력하고 모델의 그래프를 시각화하였다. Cox 시간 변화 모델의 요약 정보가 담겨있다. Partial Log-likelihood는 모델의 적합도를 평가하는 중요한 지표 중 하나이다. 값이 높을수록 모델이 데이터를 얼마나 잘 설명하는 지를 나타낸다.
 
-```Python
+```python
 ctv.print_summary()
 plt.figure(figsize=(10,5))
 ctv.plot()
@@ -231,7 +231,7 @@ Cox Time Varying model의 요약 정보에 대한 설명:
 
 Cox 시간 변화 모델(“ctv”)를 사용하여 각 엔진에 대한 로그 부분 위험 값을 예측한다. 예측된 결과 값을 prediction 데이터 프레임에 “predictions”라는 변수로 저장한다. 이후 실제 RUL 값을 데이터 프레임에 추가한다.
 
-```Python
+```python
 # get the last unit time series data frame
 df = df_new.groupby("unit_nr").last()
 df = df[df['breakdown'] == 0]  # get engines from dataset which are still functioning so we can predict their RUL
@@ -244,7 +244,7 @@ predictions['RUL'] = df_to_predict['RUL']
 predictions.head(10)
 ```
 
-```Python
+```python
 plt.figure(figsize=(12,5))
 plt.plot(predictions['RUL'], predictions['predictions'], '.b')
 xlim = plt.gca().get_xlim()
@@ -258,7 +258,7 @@ plt.show()
 
 Cox 시간 변화 모델을 사용하여 전체 학습 데이터셋에 대한 로그 부분 위험 값을 예측하고, 이를 데이터프레임에 추가하는 부분을 설명한다. 이렇게 한 후 각 주기(기록)에 대한 예측된 위험 값을 포함하는 새로운 열('hazard')을 생성한다.
 
-```Python
+```python
 # now lets look at some hazard trajectories
 X = df_new.loc[df_new['unit_nr'].isin(df_to_predict.index)]
 X_unique = len(X['unit_nr'].unique())
@@ -275,7 +275,7 @@ plt.show()
 
 ![prediction_rul-df]({{site.url}}/images/2023-10-15-NasaTurbofan/prediction_rul_df.png){: .align-center}
 
-```Python
+```python
 df_hazard = df_new.copy().reset_index()
 df_hazard['hazard'] = ctv.predict_log_partial_hazard(df_hazard)
 df_hazard.head()
@@ -283,7 +283,7 @@ df_hazard.head()
 
 모델의 mse 값과 exponential model 값을 구하기 위해 함수를 만든다
 
-```Python
+```python
 def evaluate(y_true, y_hat, label='test'):
     mse = mean_squared_error(y_true, y_hat)
     rmse = np.sqrt(mse)
@@ -297,7 +297,7 @@ popt, pcov = curve_fit(exponential_model, df_hazard['hazard'], df_hazard['RUL'])
 print(popt)
 ```
 
-```Python
+```python
 #Idea of fit: The line that was actually fitted is less accurate as it takes data points of all engines into account.
 # check specific unit_nr
 y_hat = exponential_model(df_hazard.loc[df_hazard['unit_nr']==1, 'hazard'], 70, 0.1)
@@ -313,37 +313,37 @@ plt.close()
 
 테스트 데이터도 트레인 데이터 셋에 적용했던 것처럼 breakdown 칼럼을 만들고 dwt를 활용하여 신호처리하는 과정을 거친다.
 
-```Python
+```python
 # prep test set
 test = test.drop(labels=drop_labels, axis=1)
 test['breakdown'] = 0
 test['start'] = test['time_cycles'] - 1
 ```
 
-```Python
+```python
 df_t = test[remaining_sensors]
 ```
 
-```Python
+```python
 dwt_list = []
 for i in range(len(remaining_sensors)):
     dwt = lowpassfilter(df_t.iloc[:, i], 0.4)
     dwt_list.append(dwt)
 ```
 
-```Python
+```python
 df_test_dwt = pd.DataFrame(dwt_list)
 ```
 
-```Python
+```python
 df_test_dwt = df_test_dwt.T
 ```
 
-```Python
+```python
 df_test_dwt.columns = remaining_sensors
 ```
 
-```Python
+```python
 # predict and evaluate
 y_hat = exponential_model(df_hazard['hazard'], *popt)
 evaluate(df_hazard['RUL'], y_hat, 'train')
@@ -353,13 +353,13 @@ y_hat = exponential_model(y_pred, *popt)
 evaluate(df_test, y_hat)
 ```
 
-```Python
+```python
 def mse_evaluate(y_true, y_hat, label='test'):
     mse = mean_squared_error(y_true, y_hat)
     print('{} set MSE:{}'.format(label, mse))
 ```
 
-```Python
+```python
 mse_evaluate(df_test, y_hat)
 ```
 
@@ -372,7 +372,7 @@ mse_evaluate(df_test, y_hat)
 2. 구한 로그 부분 위험 값을 지수 저하 모델에 적용한다.
 3. 지수 저하 모델로 통해 나온 예측 값과 실제 예측 값의 차이를 구한다
 
-```Python
+```python
 ctv2 = CoxTimeVaryingFitter()
 ctv2.fit(df_new [train_cols], id_col="unit_nr", event_col='breakdown',
          start_col='start', stop_col='time_cycles', show_progress=True)

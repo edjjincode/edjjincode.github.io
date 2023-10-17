@@ -36,7 +36,7 @@ UnitNumber: 고유 기계 번호
 
 [사용한 라이브러리들에 대한 코드]
 
-```Python
+```python
 
 import pandas as pd
 import numpy as np
@@ -67,12 +67,11 @@ from scipy import fftpack
 from scipy import signal
 from scipy import optimize
 import itertools
-
 ```
 
 [데이터 셋 불러오기]
 
-```Python
+```python
 #데이터 셋 불러오기(train 데이터, test 데이터, rul 데이터)
 def prepare_data():
     dependent_var = ['RUL']
@@ -103,7 +102,7 @@ def prepare_data():
 
 각 고유 기계 번호와 사이클 수의 통계 값을 통해 데이터 분포를 확인하였다.
 
-```Python
+```python
 index_names = ['UnitNumber', 'Cycle']
 df_train[index_names].describe()
 ```
@@ -118,7 +117,7 @@ df_train[index_names].describe()
 
 고유 기계 별 사이클 수를 확인하는 과정을 거쳤다.
 
-```Python
+```python
 df_train[index_names].groupby("UnitNumber").max().describe()
 ```
 
@@ -140,13 +139,13 @@ df_train[sensor_cols].describe().transpose()
 
 [RUL 값의 히스토그램]
 
-```Python
+```python
 sc = MinMaxScaler(feature_range=(0,1))
 df_train[sensor_cols] = sc.fit_transform(df_train[sensor_cols])
 df_test[sensor_cols] = sc.transform(df_test[sensor_cols])
 ```
 
-```Python
+```python
 df_train.groupby("UnitNumber").size().plot(kind="hist")
 plt.title("Number of samples per engine")
 plt.show()
