@@ -1,6 +1,6 @@
 ---
 layout: single
-title: [NASA Turbofan 프로젝트#1]/잔여수명 예측"
+title: "[NASA Turbofan 프로젝트#1]/잔여수명 예측"
 categories: 잔여수명_예측
 tag: [RUL]
 toc: true

@@ -1,6 +1,6 @@
 ---
 layout: single
-title: [NASA Turbofan 프로젝트#2]/EDA"
+title: "[NASA Turbofan 프로젝트#2]/EDA"
 categories: 잔여수명_예측
 tag: [RUL]
 toc: true

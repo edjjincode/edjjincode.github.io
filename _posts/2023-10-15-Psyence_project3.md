@@ -1,6 +1,6 @@
 ---
 layout: single
-title: [NASA Turbofan 프로젝트#3]/Similarity Model"
+title: "[NASA Turbofan 프로젝트#3]/Similarity Model"
 categories: 잔여수명_예측
 tag: [RUL]
 toc: true

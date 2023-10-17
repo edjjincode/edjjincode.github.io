@@ -1,6 +1,6 @@
 ---
 layout: single
-title: [NASA Turbofan 프로젝트#4]/건전성 지표 모델"
+title: "[NASA Turbofan 프로젝트#4]/건전성 지표 모델"
 categories: 잔여수명_예측
 tag: [RUL]
 toc: true
