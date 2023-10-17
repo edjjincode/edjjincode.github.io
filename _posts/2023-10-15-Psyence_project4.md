@@ -350,7 +350,7 @@ result_test_df.head()
 
 ![pred_rul1]({{site.url}}/images/2023-10-15-NasaTurbofan/pred_rul1.png){: .align-center}
 
-```Python
+```python
 fig, ax = plt.subplots(nrows = 20, ncols = 5, figsize = (30,50))
 
 ax = ax.ravel()
