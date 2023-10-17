@@ -2,7 +2,7 @@
 layout: single
 title: "[코딩테스트 준비]/카펫"
 categories: CodingTest
-tag: [Python 코딩테스트]
+tag: [Python, 코딩테스트]
 toc: true
 author_profile: false
 sidebar:

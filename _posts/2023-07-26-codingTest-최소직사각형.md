@@ -2,7 +2,7 @@
 layout: single
 title: "[코딩테스트 준비]/완전 탐색/최소 직사각형"
 categories: CodingTest
-tag: [완전탐색, Python 코딩테스트]
+tag: [완전탐색, Python, 코딩테스트]
 toc: true
 author_profile: false
 sidebar:
