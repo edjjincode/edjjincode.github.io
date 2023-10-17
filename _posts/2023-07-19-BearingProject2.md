@@ -1,7 +1,7 @@
 ---
 layout: single
 title: "[베어링 고장 진단 프로젝트#2]"
-categories: 이상감지, 사이드 프로젝트
+categories: 이상감지, 사이드프로젝트
 tag: [베어링, 이상감지, 사이드 프로젝트]
 toc: true
 author_profile: false
