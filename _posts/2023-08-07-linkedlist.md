@@ -1,8 +1,8 @@
 ---
 layout: single
 title: "[자료구조 연결리스트]"
-categories: CodingTest TIL
-tag: [Python 자료구조 TIL]
+categories: CodingTest
+tag: [연결리스트]
 toc: true
 author_profile: false
 sidebar:

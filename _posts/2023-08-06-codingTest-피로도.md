@@ -2,7 +2,7 @@
 layout: single
 title: "[코딩테스트 준비]/피로도"
 categories: CodingTest
-tag: [Python 코딩테스트]
+tag: [완전탐색]
 toc: true
 author_profile: false
 sidebar:

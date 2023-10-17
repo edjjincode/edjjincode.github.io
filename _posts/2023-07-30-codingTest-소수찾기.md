@@ -2,7 +2,7 @@
 layout: single
 title: "[코딩테스트 준비]/소수 찾기"
 categories: CodingTest
-tag: [Python 코딩테스트]
+tag: [구현]
 toc: true
 author_profile: false
 sidebar:

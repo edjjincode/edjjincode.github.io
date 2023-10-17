@@ -1,8 +1,8 @@
 ---
 layout: single
 title: "[베어링 고장 진단 프로젝트#4/딥러닝을 활용한 이상감지]"
-categories: 이상감지, 사이드프로젝트
-tag: [베어링, 이상감지, 사이드 프로젝트, VAE, AnoGan, DCGAN]
+categories: 사이드프로젝트
+tag: [베어링, 이상감지, VAE, AnoGan, DCGAN]
 toc: true
 author_profile: false
 sidebar:

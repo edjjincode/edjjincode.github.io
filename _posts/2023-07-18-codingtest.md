@@ -2,7 +2,7 @@
 layout: single
 title: "[코딩테스트 준비]/정렬/가장 큰 수"
 categories: CodingTest
-tag: [Python, 코딩테스트, 정렬]
+tag: [정렬]
 toc: true
 author_profile: false
 sidebar:

@@ -1,8 +1,8 @@
 ---
 layout: single
 title: "[컴퓨터비전 전처리]"
-categories: CV TIL
-tag: [Python CV TIL]
+categories: TIL
+tag: [CV TIL]
 toc: true
 author_profile: false
 sidebar:

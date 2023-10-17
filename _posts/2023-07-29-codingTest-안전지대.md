@@ -2,7 +2,7 @@
 layout: single
 title: "[코딩테스트 준비]/BFS| DFS/안전 지대"
 categories: CodingTest
-tag: [BFS DFS Python 코딩테스트]
+tag: [BFS/DFS]
 toc: true
 author_profile: false
 sidebar:
