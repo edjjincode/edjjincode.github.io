@@ -1,7 +1,7 @@
 ---
 layout: single
 title: "[NASA Turbofan 프로젝트#4]/건전성 지표 모델"
-categories: 잔여수명_예측
+categories: 사이드프로젝트
 tag: [RUL]
 toc: true
 author_profile: false
